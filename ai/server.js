@@ -96,7 +96,16 @@ async function Server() {
       const { provider, baseurl } = req.query;
       if (provider === "ollama") {
         try {
-          const results = await fetch(baseurl ? `${baseurl}/api/tags` : `http://localhost:11434/api/tags`);
+          // Define an allow-list of trusted base URLs
+          const allowedBaseUrls = ['http://localhost:11434', 'https://trusted.example.com'];
+          
+          // Validate the baseurl against the allow-list
+          const validatedBaseUrl = allowedBaseUrls.includes(baseurl) ? baseurl : null;
+          if (!validatedBaseUrl) {
+            return res.status(400).json({ error: 'Invalid baseurl provided' });
+          }
+          
+          const results = await fetch(`${validatedBaseUrl}/api/tags`);
           if (!results.ok) {
             return res.status(404).json({ error: 'Failed to fetch models from Ollama' });
           }
