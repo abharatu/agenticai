@@ -60,6 +60,17 @@ Note: This project is for learning purpose only and is not designed for producti
   ./bin/agentlg      # Run langchain-based agent workflow
   ```
 
+## Quick Install
+
+You can now install all backend and frontend dependencies in one step using the install script:
+
+- **macOS/Linux/Windows (from project root):**
+  ```bash
+  ./bin/install
+  ```
+- **VS Code users:**
+  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `./bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
+
 ## Key Features
 
 ### Backend (ai/)

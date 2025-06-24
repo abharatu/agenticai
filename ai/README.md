@@ -55,6 +55,17 @@ This folder contains the Node.js backend for the AI Agent Project. The backend p
 - `agent.js` - Example standalone agent prompt and workflow.
 - `agentlg.js` - Example agent prompt and workflow with checkpointing and langchain community tool instad of MCP.
 
+## Quick Install
+
+You can now install all backend dependencies in one step using the install script:
+
+- **macOS/Linux/Windows (from project root):**
+  ```bash
+  ../bin/install
+  ```
+- **VS Code users:**
+  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `../bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
+
 ## Getting Started
 
 1. **Install dependencies:**
