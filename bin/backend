@@ -1,0 +1,14 @@
+#!/bin/bash
+# backend: Start the AI backend server (Express API)
+# Usage: ./bin/backend [args]
+
+# Set environment variables (edit as needed)
+export MODEL_PROVIDER=ollama
+export USEMCP=TRUE
+export AIPORT=8080
+
+# Change to backend directory
+cd "$(dirname "$0")/../ai"
+
+# Start the server
+node server.js "$@"

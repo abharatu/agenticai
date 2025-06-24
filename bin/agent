@@ -1,0 +1,13 @@
+#!/bin/bash
+# agent: Run the example agent workflow (agent.js)
+# Usage: ./bin/agent [args]
+
+# Set environment variables (edit as needed)
+export MODEL_PROVIDER=azureopenai
+export USEMCP=TRUE
+
+# Change to backend directory
+cd "$(dirname "$0")/../ai"
+
+# Run the agent workflow
+node agent.js "$@"

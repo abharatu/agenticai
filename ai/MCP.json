@@ -1,0 +1,28 @@
+{
+  "throwOnLoadError": true,
+  "prefixToolNameWithServerName": true,
+  "additionalToolNamePrefix": "mcp",
+  "useStandardContentBlocks": true,
+  "mcpServers": {
+    "filesystem": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem","./fsroot/"]
+    },
+    "sequential-thinking": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "wikipedia": {
+      "transport": "stdio",
+      "command": "node",
+      "args": ["./custommcp/wikipedia/build/index.js"]
+    },
+    "jira": {
+      "transport": "stdio",
+      "command": "node",
+      "args": ["./custommcp/jira/build/index.js","https://YOURDIMAIN.atlassian.net","YOURIID","YOURAPITOKEN"]
+    }
+  }
+}

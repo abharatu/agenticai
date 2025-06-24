@@ -1,0 +1,32 @@
+#!/bin/bash
+# agent: Install packages for the AI backend, custommcp servers and frontend
+
+# Usage: ./bin/install [args]
+# Change to the root directory of the project
+cd "$(dirname "$0")/.."
+# Install backend dependencies
+echo "Installing backend dependencies..."
+cd ai
+npm install 
+# Install custom MCP server dependencies
+echo "Installing custom MCP server dependencies..."
+cd custommcp
+# Loop through each custom MCP server directory and install dependencies
+for dir in */; do
+  if [ -d "$dir" ]; then
+    echo "Installing dependencies for $dir..."
+    cd "$dir"
+    # Check if package.json exists before trying to install
+    if [ -f "package.json" ]; then
+      npm install
+    else
+      echo "No package.json found in $dir, skipping..."
+    fi
+    cd ..
+  fi
+done
+# Install frontend dependencies
+echo "Installing frontend dependencies..."
+cd ../chatui
+npm install
+

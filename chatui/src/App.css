@@ -1,0 +1,232 @@
+/*
+  Centralize all color variables for light and dark mode at the top of the file.
+  Use --color-primary, --color-secondary, --color-bg, --color-fg, etc. for all UI elements.
+  Remove redundant or unused color declarations.
+*/
+:root {
+  --color-primary: #1976d2;
+  --color-primary-contrast: #fff;
+  --color-secondary: #e0e0e0;
+  --color-secondary-contrast: #000;
+  --color-bg: #fff;
+  --color-fg: #24292e;
+  --color-border: #ddd;
+  --color-link: #4078c0;
+  --color-hr: #e7e7e7;
+  --color-blockquote: #777;
+  --color-blockquote-border: #ddd;
+  --color-table-bg: #fff;
+  --color-table-bg-alt: #f8f8f8;
+  --color-table-border: #ddd;
+  --color-code-bg: rgba(0,0,0,0.04);
+  --color-code-fg: #333;
+  --color-pre-bg: #f5f5f5;
+  --color-pre-fg: #333;
+}
+body[data-mui-color-scheme="dark"] {
+  --color-primary: #1976d2;
+  --color-primary-contrast: #fff;
+  --color-secondary: #333;
+  --color-secondary-contrast: #fff;
+  --color-bg: #181a1b;
+  --color-fg: #eee;
+  --color-border: #555;
+  --color-link: #acd1d5;
+  --color-hr: #777;
+  --color-blockquote: #bbb;
+  --color-blockquote-border: #555;
+  --color-table-bg: #252a2a;
+  --color-table-bg-alt: #222;
+  --color-table-border: #555;
+  --color-code-bg: #222;
+  --color-code-fg: #eee;
+  --color-pre-bg: #222;
+  --color-pre-fg: #eee;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+  Add styles for ChatUI, App, and AgentDesigner components.
+  These classes replace inline and object styles from the JSX files.
+*/
+
+/* ChatUI message list container */
+.chatui-message-list {
+  overflow-y: auto;
+  margin-bottom: 16px;
+  background-color: var(--color-chatui-bg);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ChatUI message item */
+.chatui-message-item-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.chatui-message-item-assistant {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* ChatUI message bubble */
+.chatui-message-bubble-user {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-radius: 16px;
+  padding: 8px 16px;
+  max-width: 70%;
+  display: inline-block;
+}
+body[data-mui-color-scheme="dark"] .chatui-message-bubble-user {
+  background: #1976d2;
+  color: #fff;
+}
+.chatui-message-bubble-assistant {
+  background: var(--color-secondary);
+  color: var(--color-secondary-contrast);
+  border-radius: 16px;
+  padding: 8px 16px;
+  max-width: 70%;
+  display: inline-block;
+}
+body[data-mui-color-scheme="dark"] .chatui-message-bubble-assistant {
+  background: #333;
+  color: #fff;
+}
+
+/* ChatUI error */
+.chatui-error {
+  color: red;
+  margin-bottom: 8px;
+}
+
+/* ChatUI input row */
+.chatui-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* AgentDesigner styles */
+.agentdesigner-root {
+  display: flex;
+  height: 80vh;
+  background: var(--color-pre-bg);
+}
+body[data-mui-color-scheme="dark"] .agentdesigner-root {
+  background: var(--color-pre-bg);
+}
+.agentdesigner-palette {
+  width: 150px;
+  border-right: 1px solid #ccc;
+  padding: 16px;
+}
+.agentdesigner-block {
+  margin: 8px 0;
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  cursor: grab;
+  text-align: center;
+}
+body[data-mui-color-scheme="dark"] .agentdesigner-block {
+  background: #333;
+}
+.agentdesigner-canvas {
+  flex: 1;
+  position: relative;
+  background: var(--color-bg);
+}
+body[data-mui-color-scheme="dark"] .agentdesigner-canvas {
+  background: var(--color-bg);
+}
+.agentdesigner-element {
+  position: absolute;
+  padding: 12px;
+  background: #90caf9;
+  border-radius: 6px;
+  min-width: 60px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* App header overrides */
+.app-header-title {
+  flex-grow: 1;
+}
+
+/* Utility */
+.mr-1 { margin-right: 8px; }
+.mb-2 { margin-bottom: 16px; }
+
+/* Table styles */
+table, #wrapper table {
+  background: var(--color-table-bg);
+  color: var(--color-fg);
+  border-collapse: collapse;
+}
+table th, #wrapper table th {
+  font-weight: 700;
+  padding: 6px 13px;
+  border: 1px solid var(--color-table-border);
+  background: var(--color-table-bg);
+  color: var(--color-fg);
+}
+table td, #wrapper table td {
+  padding: 6px 13px;
+  border: 1px solid var(--color-table-border);
+  background: var(--color-table-bg);
+  color: var(--color-fg);
+}
+table tr, #wrapper table tr {
+  background: var(--color-table-bg);
+  color: var(--color-fg);
+  border-top: 1px solid var(--color-table-border);
+}
+table tr:nth-child(2n), #wrapper table tr:nth-child(2n) {
+  background: var(--color-table-bg-alt);
+}
+
+/*
+  Ensure ChatUI chat view bubbles and container support dark and light mode using CSS variables and MUI theme selectors.
+*/

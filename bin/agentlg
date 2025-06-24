@@ -1,0 +1,12 @@
+#!/bin/bash
+# agentlg: Run the langchain-based agent workflow (agentlg.js)
+# Usage: ./bin/agentlg [args]
+
+# Set environment variables (edit as needed)
+export MODEL_PROVIDER=azureopenai
+
+# Change to backend directory
+cd "$(dirname "$0")/../ai"
+
+# Run the langchain agent workflow
+node agentlg.js "$@"

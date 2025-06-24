@@ -1,0 +1,9 @@
+#!/bin/bash
+# frontend: Start the React + Vite frontend dev server
+# Usage: ./bin/frontend
+
+# Change to frontend directory
+cd "$(dirname "$0")/../chatui"
+
+# Start the Vite dev server
+npm run dev
