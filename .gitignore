@@ -18,6 +18,7 @@ node_modules
 mode.config.azureopenai.json
 mode.config.openai.json
 agentlgconfig.js
+MCP.json
 
 # misc
 .DS_Store
