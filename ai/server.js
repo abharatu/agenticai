@@ -25,6 +25,14 @@ async function Server() {
     app.use(cors());
     app.use(express.json());
 
+    // Set up rate limiter: maximum of 100 requests per 15 minutes
+    const RateLimit = (await import('express-rate-limit')).default;
+    const limiter = RateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs
+      message: { error: "Too many requests, please try again later." }
+    });
+
     // =========================
     // Health Check Endpoint
     // =========================
@@ -346,7 +354,7 @@ async function Server() {
      *       500:
      *         description: Failed to read MCP.json
      */
-    app.get('/api/mcpconfig', async (req, res) => {
+    app.get('/api/mcpconfig', limiter, async (req, res) => {
       try {
         const fs = await import('fs/promises');
         const path = await import('path');
