@@ -24,6 +24,13 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.min.css';
 
 // =========================
+// Backend URL Configuration
+// =========================
+// Change this to your backend URL if different
+// For local development, ensure your backend is running on this port
+const backendUrl = "http://localhost:8080";
+
+// =========================
 // Markdown and Syntax Highlighting Setup
 // =========================
 const marked = new Marked(
@@ -148,12 +155,19 @@ function copyToClipboard(text) {
  * @param {boolean} useMCP - Whether MCP is enabled
  * @param {object} mcpConfig - MCP configuration
  * @param {function} onUpdateMcpConfig - Handler to update MCP config
+ * @param {string} systemMessage - System message to prepend to every chat (optional)
  */
-export default function ChatUI({ theme, config, configError, thinkActive, modelConfig, useMCP, mcpConfig, onUpdateMcpConfig }) {
+export default function ChatUI({ theme, config, configError, thinkActive, modelConfig, useMCP, mcpConfig, onUpdateMcpConfig, systemMessage }) {
   // =========================
   // State
   // =========================
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    // If systemMessage is set, start with it as the first message
+    if (systemMessage && systemMessage.trim()) {
+      return [{ role: 'system', content: systemMessage.trim() }];
+    }
+    return [];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [streamedText, setStreamedText] = useState('');
@@ -164,6 +178,22 @@ export default function ChatUI({ theme, config, configError, thinkActive, modelC
   // Streaming mode detection
   const isStreaming = config && config.config && (config.config.stream || config.config.streaming);
 
+  // If systemMessage changes, reset chat with new system message
+  React.useEffect(() => {
+    setMessages((msgs) => {
+      // If already has system message as first, replace it
+      if (systemMessage && systemMessage.trim()) {
+        if (msgs.length === 0 || msgs[0].role !== 'system' || msgs[0].content !== systemMessage.trim()) {
+          return [{ role: 'system', content: systemMessage.trim() }];
+        }
+      } else if (msgs.length > 0 && msgs[0].role === 'system') {
+        // Remove system message if cleared
+        return msgs.slice(1);
+      }
+      return msgs;
+    });
+  }, [systemMessage]);
+
   // =========================
   // Message Send Handler
   // =========================
@@ -173,26 +203,31 @@ export default function ChatUI({ theme, config, configError, thinkActive, modelC
   const handleSend = async () => {
     if (input.trim() === '') return;
     let userMessage = { role: 'user', content: input };
-    setMessages([...messages, userMessage]);
+    // If first message and systemMessage is set, ensure system message is present
+    let baseMessages = messages;
+    if (systemMessage && systemMessage.trim() && (messages.length === 0 || messages[0].role !== 'system')) {
+      baseMessages = [{ role: 'system', content: systemMessage.trim() }];
+    }
+    setMessages([...baseMessages, userMessage]);
     setInput('');
     setLoading(true);
     setStreamedText('');
     let sendContent = input;
     const provider = config && config.provider;
-    if ((provider !== 'azureopenai' || provider !== 'openai') && thinkActive === true) {
+    if ((provider !== 'azureopenai' && provider !== 'openai') && thinkActive === false) {
       sendContent += ' /no_think';
     }
     const sendMessage = { role: 'user', content: sendContent };
     if (isStreaming) {
       try {
-        const response = await fetch('http://localhost:8080/api/chat', {
+        const response = await fetch(backendUrl + '/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             modelConfig: modelConfig,
             mcpConfig: useMCP ? mcpConfig : undefined,
             messages: [
-              ...messages,
+              ...baseMessages,
               sendMessage
             ]
           })
@@ -227,13 +262,13 @@ export default function ChatUI({ theme, config, configError, thinkActive, modelC
       }
     } else {
       try {
-        const response = await fetch(`http://localhost:8080/api/chat`, {
+        const response = await fetch(backendUrl + '/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             modelConfig: modelConfig,
             messages: [
-              ...messages,
+              ...baseMessages,
               userMessage
             ]
           })
@@ -286,19 +321,29 @@ export default function ChatUI({ theme, config, configError, thinkActive, modelC
       {/* Message List */}
       <Box className="chatui-message-list">
         <List>
-          {messages.map((msg, idx) => (
+          {/* Except system render all messages */}
+          {messages.filter(msg=>msg.role !== "system").map((msg, idx) => (
             <ListItem
               key={idx}
-              className={msg.role === 'user' ? 'chatui-message-item-user' : 'chatui-message-item-assistant'}
+              className={
+                msg.role === 'user' ? 'chatui-message-item-user'
+                : msg.role === 'system' ? 'chatui-message-item-system'
+                : 'chatui-message-item-assistant'
+              }
               sx={{ justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', display: 'flex', alignItems: 'flex-start' }}
             >
             <ListItemText
                 primary={
                   <span>
+                    {msg.role === 'system' ? <><b>System:</b> </> : null}
                     {renderMessageContent(msg.content)}
                   </span>
                 }
-                className={msg.role === 'user' ? 'chatui-message-bubble-user' : 'chatui-message-bubble-assistant'}
+                className={
+                  msg.role === 'user' ? 'chatui-message-bubble-user'
+                  : msg.role === 'system' ? 'chatui-message-bubble-system'
+                  : 'chatui-message-bubble-assistant'
+                }
               />
             <IconButton
                 size="small"

@@ -1,5 +1,5 @@
 /**
- * App.jsx - Main React Application for Chat UI
+ * App.jsx - Main React Application for Agent UI
  *
  * This file implements the main UI for the chat application, including theme switching,
  * provider/model selection, MCP config management, and routing between chat and agent designer views.
@@ -21,13 +21,21 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import ChatIcon from '@mui/icons-material/Chat';
 import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
+import TryIcon from '@mui/icons-material/Try';
 import AzureOpenAIIcon from './azureopenai.svg';
 import OpenAIIcon from './openai.svg';
 import OllamaIcon from './ollama.svg';
 import McpIcon from './mcp.svg';
 import AgentDesigner from './AgentDesigner.jsx';
-import ChatUI from './ChatUI.jsx';
+import AgentUI from './AgentUI.jsx';
 import './App.css';
+
+// =========================
+// Backend URL Configuration
+// =========================
+// Change this to your backend URL if different
+// For local development, ensure your backend is running on this port
+const backendUrl = "http://localhost:8080";
 
 function App() {
   // =========================
@@ -43,7 +51,7 @@ function App() {
   const [configError, setConfigError] = useState(null);
   const [thinkActive, setThinkActive] = useState(() => {
     const stored = localStorage.getItem('thinkActive');
-    return (provider !== 'openai' && provider !== 'azureopenai') ? (stored === null ? false : stored === 'true') : false;
+    return (stored === null ? false : stored === 'true');
   });
   const [modelMenuAnchor, setModelMenuAnchor] = useState(null);
   const [ollamaModels, setOllamaModels] = useState([]);
@@ -52,7 +60,12 @@ function App() {
   const [modelListDialogOpen, setModelListDialogOpen] = useState(false);
   const [mcpDialogOpen, setMcpDialogOpen] = useState(false);
   const [mcpConfigError, setMcpConfigError] = useState(null);
-  const [model, setModel] = useState('gpt-4o');
+  const [model, setModel] = useState('Unknown Model');
+
+  // System Message State
+  const [systemMessage, setSystemMessage] = useState(() => localStorage.getItem('systemMessage') || 'You are a helpful assistant.');
+  const [systemDialogOpen, setSystemDialogOpen] = useState(false);
+  const [systemMessageDraft, setSystemMessageDraft] = useState(systemMessage);
 
   // =========================
   // Effects: Persist and Fetch Configs
@@ -61,11 +74,16 @@ function App() {
     localStorage.setItem('thinkActive', thinkActive);
   }, [thinkActive]);
 
+  // Persist system message in localStorage
+  useEffect(() => {
+    localStorage.setItem('systemMessage', systemMessage);
+  }, [systemMessage]);
+
   // Fetch config on mount
   useEffect(() => {
     async function fetchConfig() {
       try {
-        const res = await fetch('http://localhost:8080/api/config');
+        const res = await fetch(backendUrl + '/api/config');
         if (!res.ok) throw new Error('Failed to fetch config');
         const data = await res.json();
         setConfig(data);
@@ -83,7 +101,7 @@ function App() {
   useEffect(() => {
     async function fetchMcpConfig() {
       try {
-        const res = await fetch('http://localhost:8080/api/mcpconfig');
+        const res = await fetch(backendUrl + '/api/mcpconfig');
         if (!res.ok) throw new Error('Failed to fetch MCP config');
         const data = await res.json();
         setDefaultMCPConfig(data);
@@ -132,7 +150,7 @@ function App() {
       setModelMenuAnchor(event.currentTarget);
       if (ollamaModels.length === 0) {
         try {
-          const res = await fetch('http://localhost:8080/api/models?provider=ollama');
+          const res = await fetch(backendUrl + '/api/models?provider=ollama');
           if (!res.ok) throw new Error('Failed to fetch Ollama models');
           const data = await res.json();
           setOllamaModels(Array.isArray(data.models) ? data.models : data);
@@ -258,7 +276,7 @@ function App() {
           <Paper elevation={3} sx={{ p: 2 }}>
             {/* Header Bar with Navigation and Provider/Model Info */}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Typography variant="h4" align="center" gutterBottom className="app-header-title">Chat UI</Typography>
+              <Typography variant="h4" align="center" gutterBottom className="app-header-title">Agent UI</Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
                 {location.pathname !== '/agentdesigner' ? (
                   <Link to="/agentdesigner" style={{ textDecoration: 'none' }} className="mr-1">
@@ -275,7 +293,7 @@ function App() {
                 )}
                 {/* Toggleable Think Bulb Icon for non-OpenAI providers */}
                 {provider !== 'openai' && provider !== 'azureopenai' && (
-                  <IconButton
+                  <IconButton title='Toggle Think Mode (Works for reasoning models only)'
                     onClick={() => setThinkActive(a => !a)}
                     sx={{
                       mr: 1,
@@ -287,6 +305,15 @@ function App() {
                     <EmojiObjectsIcon fontSize="small" />
                   </IconButton>
                 )}
+                {/* System Message Icon */}
+                <IconButton title='Set System Message'
+                  onClick={() => { setSystemMessageDraft(systemMessage); setSystemDialogOpen(true); }}
+                  sx={{ mr: 1 }}
+                  size="small"
+                  color={systemMessage ? 'primary' : 'default'}
+                >
+                  <TryIcon fontSize="small" />
+                </IconButton>
                 {/* Provider/Model Display and Selection */}
                 {provider === 'openai' && (
                   <>
@@ -394,7 +421,7 @@ function App() {
             {/* Main App Routing */}
             <Routes>
               <Route path="/agentdesigner" element={<AgentDesigner theme={theme} />} />
-              <Route path="/" element={<ChatUI theme={theme} config={config} configError={configError} thinkActive={thinkActive} modelConfig={modelConfig} useMCP={useMCP} mcpConfig={mcpConfig} onUpdateMcpConfig={setMcpConfig} />} />
+              <Route path="/" element={<AgentUI theme={theme} config={config} configError={configError} thinkActive={thinkActive} modelConfig={modelConfig} useMCP={useMCP} mcpConfig={mcpConfig} onUpdateMcpConfig={setMcpConfig} systemMessage={systemMessage} />} />
             </Routes>
             {/* Error dialog for model list fetch */}
             <Dialog open={modelListDialogOpen} onClose={() => setModelListDialogOpen(false)}>
@@ -436,6 +463,23 @@ function App() {
               <DialogActions>
                 <Button onClick={() => setMcpDialogOpen(false)} color="secondary">Cancel</Button>
                 <Button onClick={handleSaveMcpConfig} color="primary" variant="contained">Save</Button>
+              </DialogActions>
+            </Dialog>
+            {/* System Message Dialog */}
+            <Dialog open={systemDialogOpen} onClose={() => setSystemDialogOpen(false)}
+                    PaperProps={{ sx: { width: '75vw', maxWidth: '75vw' } }}>
+              <DialogTitle>Set System Message</DialogTitle>
+              <DialogContent>
+                <textarea
+                  style={{ width: '100%', minHeight: 80, fontSize: 16, padding: 8 }}
+                  value={systemMessageDraft}
+                  onChange={e => setSystemMessageDraft(e.target.value)}
+                  placeholder="Enter a system message to be sent as the first message in every chat."
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setSystemDialogOpen(false)} color="secondary">Cancel</Button>
+                <Button onClick={() => { setSystemMessage(systemMessageDraft); setSystemDialogOpen(false); }} color="primary" variant="contained">Save</Button>
               </DialogActions>
             </Dialog>
           </Paper>

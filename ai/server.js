@@ -9,10 +9,11 @@
  */
 
 import express from 'express';
+import RateLimit from 'express-rate-limit';
 import cors from 'cors';
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { concat } from "@langchain/core/utils/stream";
-import { ModelProvider, ModelConfig, Model, ModelWithMCPFile } from './Model.js';
+import { ollamaBaseUrl, ModelProvider, ModelConfig, Model, ModelWithMCPFile } from './Model.js';
 
 /**
  * Initializes and returns an Express app with all API endpoints.
@@ -25,13 +26,15 @@ async function Server() {
     app.use(cors());
     app.use(express.json());
 
-    // Set up rate limiter: maximum of 100 requests per 15 minutes
-    const RateLimit = (await import('express-rate-limit')).default;
+    // Set up rate limiter: maximum of 100 requests per 5 minutes
     const limiter = RateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
+      windowMs: 5 * 60 * 1000, // 5 minutes
       max: 100, // limit each IP to 100 requests per windowMs
       message: { error: "Too many requests, please try again later." }
     });
+
+    // Apply rate limiter to all endpoints
+    app.use(limiter);
 
     // =========================
     // Health Check Endpoint
@@ -101,19 +104,10 @@ async function Server() {
      *         description: Failed to fetch models from the provider
      */
     app.get('/api/models', async (req, res) => {
-      const { provider, baseurl } = req.query;
+      const { provider } = req.query;
       if (provider === "ollama") {
         try {
-          // Define an allow-list of trusted base URLs
-          const allowedBaseUrls = ['http://localhost:11434', 'https://trusted.example.com'];
-          
-          // Validate the baseurl against the allow-list
-          const validatedBaseUrl = allowedBaseUrls.includes(baseurl) ? baseurl : null;
-          if (!validatedBaseUrl) {
-            return res.status(400).json({ error: 'Invalid baseurl provided' });
-          }
-          
-          const results = await fetch(`${validatedBaseUrl}/api/tags`);
+          const results = await fetch(`${ollamaBaseUrl}/api/tags`);
           if (!results.ok) {
             return res.status(404).json({ error: 'Failed to fetch models from Ollama' });
           }
@@ -354,7 +348,7 @@ async function Server() {
      *       500:
      *         description: Failed to read MCP.json
      */
-    app.get('/api/mcpconfig', limiter, async (req, res) => {
+    app.get('/api/mcpconfig', async (req, res) => {
       try {
         const fs = await import('fs/promises');
         const path = await import('path');

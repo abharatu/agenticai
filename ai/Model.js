@@ -28,14 +28,26 @@ const provider = process.env.MODEL_PROVIDER || 'openai';
 // Load Model Configuration
 // =========================
 // Loads the model config from /secrets/mode.config.<provider>.json
-const configPath = path.join(process.cwd(), `/secrets/mode.config.${provider}.json`);
-let modelConfig = {};
-try {
-  const configRaw = fs.readFileSync(configPath, 'utf-8');
-  modelConfig = JSON.parse(configRaw);
-} catch (err) {
-  console.error('Failed to load mode.config.json:', err);
+export const loadModelConfig = function(provider) {
+  const configPath = path.join(process.cwd(), `/secrets/mode.config.${provider}.json`);
+  try {
+    const configRaw = fs.readFileSync(configPath, 'utf-8');
+    return JSON.parse(configRaw); 
+  } catch (err) {
+    console.error(`Failed to load mode.config.${provider}.json:`, err);
+    return {};
+  }
 }
+
+// =========================
+// Ollama Model Base URLs
+// This is used for allama specific api calls
+// Ollama models are hosted on a local server by default
+// You can change the base URL in the mode.config.ollama.json file
+// If you are using a remote Ollama server, set the baseUrl in the config file
+// The default base URL is http://localhost:11434
+// =========================
+export const ollamaBaseUrl = loadModelConfig("ollama").baseUrl || 'http://localhost:11434';
 
 // =========================
 // Model and MCP Client Factories
@@ -49,7 +61,7 @@ export const ModelProvider = provider;
 /**
  * The loaded model configuration object
  */
-export const ModelConfig = modelConfig;
+export const ModelConfig = loadModelConfig(provider);;
 
 /**
  * Factory function to create a model instance for the selected provider.
