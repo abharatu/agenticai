@@ -78,7 +78,7 @@ function processIssue(issueJSON, isSub = false) {
     else {
         md += "No comments.";
     }
-    return md;
+    return md + "\n\n";
 }
 // ----------------------
 // Utility: Fetch from Jira API
@@ -118,7 +118,7 @@ async function getIssue(ticket) {
         return processIssue(data);
     })
         .catch(error => {
-        return `**Error fetching Jira issue:** ${error}`;
+        return `**Error fetching Jira issue:** ${error}\n\n`;
     });
 }
 // ----------------------
@@ -138,10 +138,10 @@ async function getSprint(sprintId) {
         md += `**Complete Date:** ${data.completeDate || 'N/A'}\n`;
         md += `**Created Date:** ${data.createdDate}\n`;
         md += `**Board ID:** ${data.originBoardId}\n`;
-        md += `**Goal:**\n${data.goal}`;
+        md += `**Goal:**\n${data.goal}\n\n`;
         return md;
     }).catch(error => {
-        return `**Error fetching Jira sprint:** ${error}`;
+        return `**Error fetching Jira sprint:** ${error}\n\n`;
     });
 }
 // ----------------------
@@ -163,11 +163,11 @@ async function getActiveSprint(boardId = 1197) {
             md += `**End Date:** ${sprint.endDate}\n`;
             md += `**Created Date:** ${sprint.createdDate}\n`;
             md += `**Board ID:** ${sprint.originBoardId}\n`;
-            md += `**Goal:**\n${sprint.goal}`;
+            md += `**Goal:**\n${sprint.goal}\n\n`;
             return md;
         }).join("\n\n");
     }).catch(error => {
-        return `**Error fetching active sprint:** ${error}`;
+        return `**Error fetching active sprint:** ${error}\n\n`;
     });
 }
 // ----------------------

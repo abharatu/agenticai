@@ -120,7 +120,7 @@ class WikipediaServer {
           content: [
             {
               type: 'text',
-              text: summary.extract
+              text: `${summary.extract} \n\n\n[Read more on Wikipedia](${summary.content_urls?.desktop?.page})`
             }
           ]
         };

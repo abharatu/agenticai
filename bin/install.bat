@@ -8,7 +8,10 @@ REM Install backend dependencies
 ECHO Installing backend dependencies...
 cd ai
 call npm install
-
+# Create fsroot directory if it doesn't exist
+if not exist "fsroot" (
+  mkdir fsroot
+)
 REM Install custom MCP server dependencies
 ECHO Installing custom MCP server dependencies...
 cd custommcp
