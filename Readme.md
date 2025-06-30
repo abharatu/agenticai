@@ -1,6 +1,6 @@
 # AI Agent Project
 
-This project is a modular AI agent system with a Node.js backend for AI model orchestration and a modern React + Vite frontend chat UI.
+This project is a modular AI agent system with a Langchain and Node.js backend for AI model orchestration and a modern React + Vite frontend chat UI.
 
 Note: This project is for learning purpose only and is not designed for production use.
 
