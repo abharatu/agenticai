@@ -7,7 +7,7 @@ export MODEL_PROVIDER=azureopenai
 export USEMCP=TRUE
 
 # Change to backend directory
-cd "$(dirname "$0")/../ai/agents"
+cd "$(dirname "$0")/../ai"
 
 # Run the agent workflow
-node "$@"
+node agent.js "$@"

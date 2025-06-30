@@ -65,7 +65,7 @@ const agentConfig = {
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "./agentfsexamples"
+        "agentfsexamples"
       ]
     }
   },
@@ -122,7 +122,7 @@ export async function runExample(client) {
     // =========================
     // Model implementation logic (inlined from Model.js)
     const provider = process.env.MODEL_PROVIDER || 'openai';
-    const configPath = path.join(process.cwd(), `../secrets/mode.config.${provider}.json`);
+    const configPath = path.join(process.cwd(), `/secrets/mode.config.${provider}.json`);
     let modelConfig = {};
     try {
       const configRaw = fs.readFileSync(configPath, 'utf-8');
@@ -213,10 +213,17 @@ export async function runExample(client) {
       console.log(`\n--- PROMPT: ${example.name} ---`);
       console.log(`Query: ${example.query}`);
 
-      // Run the LangGraph agent
-      const result = await app.invoke({
-        messages: [new HumanMessage(example.query)],
-      });
+      // Run the LangGraph agent with thread_id configuration
+      const result = await app.invoke(
+        {
+          messages: [new HumanMessage(example.query)],
+        },
+        {
+          configurable: {
+            thread_id: `thread-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          },
+        }
+      );
 
       // Display the final answer
       const finalMessage = result.messages[result.messages.length - 1];
