@@ -1,10 +1,25 @@
-// agentlg.js - LangGraph Agent Example (JavaScript Version)
-//
-// This script demonstrates how to build a simple LangGraph agent using OpenAI and TavilySearch tools.
-// It uses a checkpointing mechanism to persist memory between agent runs (threaded conversations).
-//
-// Author: Vikrama Aditya Bharatula
-// Date: 2025-06-24
+/* agentlg.js - LangGraph Agent Example (JavaScript Version)
+* 
+*  Overview:
+*  This script demonstrates how to build a simple LangGraph agent using OpenAI and TavilySearch tools.
+*  It uses a checkpointing mechanism to persist memory between agent runs (threaded conversations).
+* 
+*  Agent Flow Implementation:
+* 
+*    ┌───────────────┐      ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+*    │ User Message │ ───▶ │   LLM (OpenAI)│ ───▶ │   Tool Call   │ ───▶ │   Response    │
+*    │ (question)   │      │ (reason/plan) │      │ (TavilySearch)│      │ (answer)     │
+*    └───────────────┘      └───────────────┘      └───────────────┘      └───────────────┘
+* 
+*  1. User sends a message (question)
+*  2. LLM interprets the message and plans tool usage
+*  3. Agent invokes the tool (e.g., TavilySearch for web search)
+*  4. Agent returns the response to the user
+*  5. MemorySaver persists conversation state for continuity (threaded conversations)
+* 
+*  Author: Vikrama Aditya Bharatula
+*  Date: 2025-06-24
+*/
 
 // =========================
 // Configuration: API Keys

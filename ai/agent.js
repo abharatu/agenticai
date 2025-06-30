@@ -4,6 +4,21 @@
  * This script demonstrates how to use the Filesystem MCP server with LangGraph
  * to create a structured workflow for complex file operations using a graph-based agent.
  *
+ * Agent Flow Implementation:
+ *
+ *   ┌───────────────┐      ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+ *   │ User Message │ ───▶ │   LLM (Plan)  │ ───▶ │   Tool Call   │ ───▶ │   Response    │
+ *   │ (file op req)│      │ (reasoning)   │      │ (MCP tools)   │      │ (result)      │
+ *   └───────────────┘      └───────────────┘      └───────────────┘      └───────────────┘
+ *            ▲                        │
+ *            └─────────────loop if tool calls───────┘
+ *
+ * 1. User sends a file operation request (e.g., read/write files)
+ * 2. LLM plans and decides if tools are needed
+ * 3. If tool calls are required, agent invokes MCP tools (filesystem)
+ * 4. The loop continues until no more tool calls are needed
+ * 5. Agent returns the final response/result to the user
+ *
  * Features:
  * - Clear separation of reasoning (LLM) and execution (tools)
  * - Conditional routing for tool calls
@@ -36,6 +51,7 @@ import path from "path";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { ChatOpenAI, AzureChatOpenAI } from '@langchain/openai';
 import { ChatOllama } from '@langchain/ollama';
+import { MemorySaver } from "@langchain/langgraph";
 
 // =========================
 // Agent Configuration (inlined from Agent.json)
@@ -106,7 +122,7 @@ export async function runExample(client) {
     // =========================
     // Model implementation logic (inlined from Model.js)
     const provider = process.env.MODEL_PROVIDER || 'openai';
-    const configPath = path.join(process.cwd(), `/secrets/mode.config.${provider}.json`);
+    const configPath = path.join(process.cwd(), `../secrets/mode.config.${provider}.json`);
     let modelConfig = {};
     try {
       const configRaw = fs.readFileSync(configPath, 'utf-8');
@@ -179,8 +195,11 @@ export async function runExample(client) {
         return END;
       });
 
+    // Define a checkpointer to save the state of the workflow  
+    const checkpointer = new MemorySaver();
+
     // Compile the graph
-    const app = workflow.compile();
+    const app = workflow.compile({ checkpointer });
 
     // Use prompts from Agent.json
     const prompts = Array.isArray(agentConfig.prompts) ? agentConfig.prompts : [];
@@ -191,7 +210,7 @@ export async function runExample(client) {
     console.log("\n=== RUNNING LANGGRAPH AGENT ===");
 
     for (const example of prompts) {
-      console.log(`\n--- Example: ${example.name} ---`);
+      console.log(`\n--- PROMPT: ${example.name} ---`);
       console.log(`Query: ${example.query}`);
 
       // Run the LangGraph agent
@@ -202,22 +221,6 @@ export async function runExample(client) {
       // Display the final answer
       const finalMessage = result.messages[result.messages.length - 1];
       console.log(`\nResult: ${finalMessage.content}`);
-
-      // Let's list the directory to see the changes
-      console.log("\nDirectory listing after operations:");
-      try {
-        const listResult = await app.invoke({
-          messages: [
-            new HumanMessage(
-              "List all files and directories in the current directory and show their structure."
-            ),
-          ],
-        });
-        const listMessage = listResult.messages[listResult.messages.length - 1];
-        console.log(listMessage.content);
-      } catch (error) {
-        console.error("Error listing directory:", error);
-      }
     }
   } catch (error) {
     console.error("Error:", error);

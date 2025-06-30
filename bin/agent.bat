@@ -5,6 +5,6 @@ REM Usage: agent.bat [args]
 set MODEL_PROVIDER=azureopenai
 set USEMCP=TRUE
 
-cd /d %~dp0..\ai
+cd /d %~dp0..\ai\agents
 
-node agent.js %*
+node %*

@@ -1,6 +1,6 @@
 #!/bin/bash
-# agentlg: Run the langchain-based agent workflow (agentlg.js)
-# Usage: ./bin/agentlg [args]
+# agentcp: Run the langchain-based agent workflow (agentcp.js)
+# Usage: ./bin/agentcp [args]
 
 # Set environment variables (edit as needed)
 export MODEL_PROVIDER=azureopenai
@@ -9,4 +9,4 @@ export MODEL_PROVIDER=azureopenai
 cd "$(dirname "$0")/../ai"
 
 # Run the langchain agent workflow
-node agentlg.js "$@"
+node agentcp.js "$@"

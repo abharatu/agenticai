@@ -14,6 +14,9 @@ node_modules
 # playground
 /playground
 
+# agentfs examples
+/ai/agentfsexamples
+
 # Do not add model configs to git
 mode.config.azureopenai.json
 mode.config.openai.json

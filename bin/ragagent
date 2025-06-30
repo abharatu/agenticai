@@ -1,0 +1,11 @@
+#!/bin/bash
+# ragagent: Run the example ragagent workflow (ragagent.js)
+# Usage: ./bin/ragagent [args]
+
+# Set environment variables (edit as needed)
+export OPENAI_API_KEY="sk-youropenaiapikey"
+# Change to backend directory
+cd "$(dirname "$0")/../ai"
+
+# Run the ragagent workflow
+npx tsx ragagent.ts "$@"
