@@ -26,7 +26,7 @@ This folder contains the React + Vite frontend for the AI Agent Project. The Cha
 - **Live Chat Interface:**
   - Rich markdown, code, and math rendering (supports KaTeX and highlight.js).
   - Streaming and non-streaming model responses.
-  - Supports OpenAI, Azure OpenAI, Ollama, and MCP tool servers.
+  - Supports OpenAI, Azure OpenAI, Ollama, and MCP tool servers (filesystem, Wikipedia, Jira, Utility, etc.).
   - Toggleable "think" mode for agent reasoning display.
 
 - **Agent Designer:**
@@ -46,8 +46,8 @@ This folder contains the React + Vite frontend for the AI Agent Project. The Cha
 
 - `src/`
   - `App.jsx` - Main application shell, theme, routing, and provider/model controls.
-  - `ChatUI.jsx` - Main chat interface component.
-  - `AgentDesigner.jsx` - Visual agent workflow designer (WIP).
+  - `AgentUI.jsx` - Main chat interface component.
+  - `AgentDesigner.jsx` - Visual agent workflow designer.
   - `public/` - Static assets (icons, manifest, etc.).
   - `index.js`, `main.jsx` - Entry points for Vite/React.
   - `App.css`, `index.css` - Styles.
@@ -58,10 +58,10 @@ You can now install all frontend dependencies in one step using the install scri
 
 - **macOS/Linux/Windows (from project root):**
   ```bash
-  ../bin/install
+  ./bin/install
   ```
 - **VS Code users:**
-  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `../bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
+  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `./bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
 
 ## Getting Started
 

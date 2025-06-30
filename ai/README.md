@@ -30,6 +30,7 @@ This folder contains the Node.js backend for the AI Agent Project. The backend p
 - **Model Context Protocol (MCP) Integration:**
   - Supports MCP tool servers for advanced agent workflows (filesystem, Wikipedia, Jira, etc.).
   - Easily extendable with custom MCP tools (see `custommcp/`).
+  - Custom MCP tools can be written in TypeScript (see `custommcp/jira`, `custommcp/utility`, `custommcp/wikipedia`).
 
 - **REST API via Express:**
   - `/api/config` - Get current model/provider config.
@@ -38,22 +39,21 @@ This folder contains the Node.js backend for the AI Agent Project. The backend p
   - `/api/mcpconfig` - Get MCP tool server configuration.
 
 - **Agent Workflows:**
-  - Example agent flows and prompts in `examples/` and `Agent.json`.
+  - Example agent flows and prompts in `Agent.json`.
   - Visual agent designer supported in the frontend.
 
 - **Custom Tool Servers:**
-  - Add your own MCP tool servers in `custommcp/` (see `jira/`, `wikipedia/`).
+  - Add your own MCP tool servers in `custommcp/` (see `jira/`, `wikipedia/`, `utility/`).
 
 ## Project Structure
 
 - `server.js` - Main Express API server (entry point).
 - `Model.js` - Model and MCP client/agent factory utilities.
-- `custommcp/` - Custom MCP tool servers (Jira, Wikipedia, etc.).
-- `examples/` - Example agent workflows and prompts.
+- `custommcp/` - Custom MCP tool servers (Jira, Wikipedia, Utility, etc.).
 - `secrets/mode.config.*.json` - Model/provider configuration files.
 - `MCP.json` - MCP tool server configuration.
 - `agent.js` - Example standalone agent prompt and workflow.
-- `agentlg.js` - Example agent prompt and workflow with checkpointing and langchain community tool instad of MCP.
+- `agentlg.mts` - Example agent prompt and workflow with checkpointing and LangChain community tool instead of MCP.
 
 ## Quick Install
 
@@ -61,10 +61,10 @@ You can now install all backend dependencies in one step using the install scrip
 
 - **macOS/Linux/Windows (from project root):**
   ```bash
-  ../bin/install
+  ./bin/install
   ```
 - **VS Code users:**
-  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `../bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
+  > If you are running this project within Visual Studio Code, you can simply run `install` in the integrated terminal (no need for `./bin/`), as the `bin` folder is added to your PATH via `.vscode/settings.json`.
 
 ## Getting Started
 
@@ -96,7 +96,7 @@ You can now install all backend dependencies in one step using the install scrip
 
 ## Extending
 
-- Add new MCP tool servers in `custommcp/` (see existing examples).
+- Add new MCP tool servers in `custommcp/` (see existing examples in `jira/`, `wikipedia/`, `utility/`).
 - Update REST API endpoints in `server.js` as needed.
 
 ## Author

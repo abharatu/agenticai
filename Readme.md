@@ -50,14 +50,15 @@ Note: This project is for learning purpose only and is not designed for producti
   Scripts for backend and frontend build/deployment and quick start.
   - `backend`: Starts the backend server (equivalent to `cd ai && node server.js`).
   - `frontend`: Starts the frontend dev server (equivalent to `cd chatui && npm run dev`).
-  - `agent`, `agentlg`: Run example agent workflows (see `ai/agent.js`, `ai/agentlg.js`).
+  - `agent`, `agentcp`, `ragagent`: Run example agent workflows (see `ai/agent.js`, `ai/agentcp.js`, `ai/ragagent.ts`).
   
   Usage examples:
   ```bash
   ./bin/backend      # Start backend API server
   ./bin/frontend     # Start frontend dev server
   ./bin/agent        # Run example agent workflow
-  ./bin/agentlg      # Run langchain-based agent workflow
+  ./bin/agentcp      # Run langchain-based agent workflow (agentcp)
+  ./bin/ragagent     # Run retrieval-augmented generation agent workflow
   ```
 
 ## Quick Install
@@ -81,7 +82,7 @@ You can now install all backend and frontend dependencies in one step using the 
   - `/api/models` - List available models.
   - `/api/chat` - Send chat messages and get model/agent responses (streaming and non-streaming).
   - `/api/mcpconfig` - Get MCP tool server configuration.
-- **Agent workflows:** Example prompts and flows in `examples/` and `Agent.json`.
+- **Agent workflows:** Example prompts and flows in `Agent.json` and the agent scripts (`ai/agent.js`, `ai/agentcp.js`, `ai/ragagent.ts`).
 - **Custom tool servers:** Add your own in `custommcp/`.
 
 ### Frontend (chatui/)
